@@ -12,15 +12,15 @@ class Board:
         self.e_c = '-'  # empty_chess
         self.O = 'O'
         self.X = 'X'
+        self.alphabat = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
     def initialize_board(self):
         for i in range(self.board_size):
             self.board_list.append([self.e_c for x in range(self.board_size)])
         self.board_array = np.array(self.board_list, dtype=str)
 
-    def update_board(self):
-        self.board_list[3][3] = 'O'
-        self.board_list[3][4] = 'X'
+    def update_board(self, pos1, pos2):
+        self.board_array[pos1][pos2] = self.O
 
     def scan_board(self):
 
@@ -62,10 +62,12 @@ class Board:
                 if i != max_index:
                     fb_ru_list.append(temp_list2)
             #
+
+
             fb_ru_array = np.array(fb_ru_list)
 
-            for row in fb_ru_array:
-                count_value = np.count_nonzero(row == x_qizi)
+            for row_list in fb_ru_array:
+                count_value = row_list.count(x_qizi)
                 if count_value > value_list[I]:
                     value_list[I] = count_value
             #
@@ -87,8 +89,8 @@ class Board:
             #
             lu_rb_array = np.array(lu_rb_list)
 
-            for row in lu_rb_array:
-                count_value = np.count_nonzero(row == x_qizi)
+            for row_list in lu_rb_array:
+                count_value = row_list.count(x_qizi)
                 if count_value > value_list[I]:
                     value_list[I] = count_value
             #
@@ -98,11 +100,11 @@ class Board:
                 print ("Error! Find 2 scan value >= 5")
                 sys.exit()
 
+            if value_list[0] <= 0 and value_list[1] <= 0:
+                print("scan error! both value <= 0")
+                sys.exit()
 
-            for i, value in value_list:
-                if value <= 0:
-                    print ("scan error! value :{}".format(value))
-                    sys.exit()
+            for i, value in enumerate(value_list):
                 if value == 5:
                     return examine_list[i]
 
@@ -110,6 +112,8 @@ class Board:
 
 
     def print_board(self):
+        print ('\n')
+        #print ("-------------------------------------------------------")
         for i, row_list in enumerate(self.board_array):
             if i<=9:
                 print(self.e_s_one, end='')
@@ -119,9 +123,9 @@ class Board:
 
         # print the last row
         print(self.e_s*2,  end='')
-        alphabat = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-        alphabat = alphabat[0:self.board_size]
+
+        alphabat = self.alphabat[0:self.board_size]
         alphabat_list = list(alphabat)
         print (self.e_s.join(alphabat_list))
 
-
+        print('\n')
