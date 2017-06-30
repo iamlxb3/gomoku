@@ -2,11 +2,11 @@ from gomoku_board import Board
 
 class Gomoku:
 
-    def __init__(self):
-        pass
+    def __init__(self, board):
+        self.board = board
 
     def initialize(self):
-        pass
+        self.board.initialize_board()
 
     def ai_move(self, board):
         pass
@@ -14,5 +14,5 @@ class Gomoku:
     def human_move(self):
         pass
 
-    def move(self):
+    def human_vs_ai(self):
         pass
