@@ -13,7 +13,7 @@ class Gomoku:
     def _ai_move(self, is_first, is_random = False):
         pos_list = [0,0]
         if is_random:
-            valid_pos_list = self.board.get_valid_pos_list()
+            valid_pos_list = self.board.get_ai_recommended_pos_list()
             pos_list = random.sample(valid_pos_list,1)[0]
 
         pos1 = pos_list[0]
@@ -36,7 +36,11 @@ class Gomoku:
         alphabat_list = list(self.board.alphabat)
         pos_str = input("Please type chess position: ")
         pos_list = pos_str.split(',')
-        pos1 = int(pos_list[0])
+        try:
+            pos1 = int(pos_list[0])
+        except ValueError:
+            print ("Invalid input!")
+            return self._human_pos_input()
         pos2_str = pos_list[1]
         if pos2_str not in alphabat_list:
             print ("Invalid input!")

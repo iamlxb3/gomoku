@@ -1,5 +1,6 @@
 import numpy as np
 import sys
+import math
 
 class Board:
 
@@ -19,8 +20,50 @@ class Board:
             self.board_list.append([self.e_c for x in range(self.board_size)])
         self.board_array = np.array(self.board_list, dtype=str)
 
-    def update_board(self, pos1, pos2):
-        self.board_array[pos1][pos2] = self.O
+    def get_valid_pos_list(self):
+        valid_pos_list = []
+        for i, row in enumerate(self.board_array):
+            for j, col in enumerate(self.board_array):
+                if self.board_array[i][j] == self.e_c:
+                    valid_pos_list.append([i,j])
+        return valid_pos_list
+
+    def get_chess_pos_list(self):
+        chess_pos_list = []
+        for i, row in enumerate(self.board_array):
+            for j, col in enumerate(self.board_array):
+                if self.board_array[i][j] == self.O or self.board_array[i][j] == self.X:
+                    chess_pos_list.append([i,j])
+        return chess_pos_list
+
+    def get_ai_recommended_pos_list(self):
+
+        def compute_distance(cor1, cor2):
+            distance = math.sqrt((cor1[0]-cor2[0])**2 + (cor1[1]-cor2[1])**2)
+            return distance
+
+        # :::get_ai_recommended_pos_list
+        recommended_pos_list = []
+        chess_pos_list = self.get_chess_pos_list()
+        valid_pos_list = self.get_valid_pos_list()
+
+        for valid_pos in valid_pos_list:
+            for chess_pos in chess_pos_list:
+                distance = compute_distance(valid_pos, chess_pos)
+
+                if distance < 6:
+                    recommended_pos_list.append(valid_pos)
+
+        return recommended_pos_list
+
+
+    def update_board(self, pos1, pos2, is_first):
+        if is_first:
+            chess = self.X
+        else:
+            chess = self.O
+
+        self.board_array[pos1][pos2] = chess
 
     def scan_board(self):
 
@@ -95,21 +138,24 @@ class Board:
                     value_list[I] = count_value
             #
 
-            # expection handling
-            if value_list[0] >= 5 and value_list[1] >= 5:
-                print ("Error! Find 2 scan value >= 5")
-                sys.exit()
+        # ----------------------------------------------------------------------------------------------------------
+        # CHECK WINNER
+        # ----------------------------------------------------------------------------------------------------------
+        # expection handling
+        if value_list[0] >= 5 and value_list[1] >= 5:
+            print ("Error! Find 2 scan value >= 5")
+            sys.exit()
+        #
+        if value_list[0] <= 0 and value_list[1] <= 0:
+            print("scan error! both value <= 0")
+            sys.exit()
 
-            if value_list[0] <= 0 and value_list[1] <= 0:
-                print("scan error! both value <= 0")
-                sys.exit()
+        for i, value in enumerate(value_list):
+            if value == 5:
+                return examine_list[i]
 
-            for i, value in enumerate(value_list):
-                if value == 5:
-                    return examine_list[i]
-
-            return None
-
+        return None
+        # ----------------------------------------------------------------------------------------------------------
 
     def print_board(self):
         print ('\n')
