@@ -19,9 +19,20 @@ gomoku1.initialize()
 # --------------------------------------------------------------------
 # AI VS AI
 # --------------------------------------------------------------------
-ai1 = GomokuAi(name='ai1', is_first=True)
-ai2 = GomokuAi(name='ai2', is_first=False)
-gomoku1.ai_vs_ai(ai1, ai2, speed=20, is_print=True)
+ai1 = GomokuAi(name='ai1_black', is_first=True)
+ai2 = GomokuAi(name='ai2_white', is_first=False)
+
+Total_game = 10
+for i in range(Total_game):
+    gomoku1.initialize()
+    gomoku1.ai_vs_ai(ai1, ai2, speed=20, is_print=True)
+    print ("Game playing ({}/{}) ...".format(i+1, Total_game))
+    ai1.print_return_win_ratio()
+    ai2.print_return_win_ratio()
+    gomoku1.game_count += 1
+
+
+
 # --------------------------------------------------------------------
 
 #gomoku1.human_test()

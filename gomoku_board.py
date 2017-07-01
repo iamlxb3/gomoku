@@ -5,7 +5,7 @@ import math
 class Board:
 
     def __init__(self):
-        self.board_size = 8
+        self.board_size = 15
         self.board_list = []
         self.board_array = np.array([])
         self.e_s_one = ' '
@@ -16,6 +16,7 @@ class Board:
         self.alphabat = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
     def initialize_board(self):
+        self.board_list = []
         for i in range(self.board_size):
             self.board_list.append([self.e_c for x in range(self.board_size)])
         self.board_array = np.array(self.board_list, dtype=str)
@@ -184,7 +185,7 @@ class Board:
         # CHECK WINNER
         # ----------------------------------------------------------------------------------------------------------
         # expection handling
-        print ("value_list: ", value_list)
+        #print ("value_list: ", value_list)
 
         if value_list[0] >= 5 and value_list[1] >= 5:
             print ("Error! Find 2 scan value >= 5")

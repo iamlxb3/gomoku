@@ -8,8 +8,11 @@ class Gomoku:
         self.board = board
         self.is_game_end = False
         self.step = 0
+        self.game_count = 0
 
     def initialize(self):
+        self.step = 0
+        self.is_game_end = False
         self.board.initialize_board()
 
     def _add_ai(self, ai1, ai2):
@@ -71,13 +74,13 @@ class Gomoku:
         if winning_chess == self.board.O:
             print("White win!")
             self.is_game_end = True
-            return True
+            return True, winning_chess
         elif winning_chess == self.board.X:
             print ("Black win!")
             self.is_game_end = True
-            return True
+            return True, winning_chess
         else:
-            return False
+            return False,''
 
 
     def human_test(self):
@@ -119,6 +122,8 @@ class Gomoku:
 
         self.board.print_board()
 
+
+
     def ai_vs_ai(self, ai1, ai2, speed = 1, is_print = False):
 
         # (0.) add ai
@@ -140,28 +145,63 @@ class Gomoku:
         while not self.is_game_end:
             time.sleep(1/speed)
             self._ai_move(first_move_ai, is_random=True)
-            is_win = self._check_win()
+
+            # ----------------------------------------------------------------------------------------------------------
+            # CHECK WIN
+            # ----------------------------------------------------------------------------------------------------------
+            is_win, winning_chess = self._check_win()
+            if is_win:
+                # record winning rate
+                if winning_chess == self.board.X:
+                    first_move_ai.win_lose_list[0] += 1
+                    second_move_ai.win_lose_list[1] += 1
+                elif winning_chess == self.board.O:
+                    second_move_ai.win_lose_list[0] += 1
+                    first_move_ai.win_lose_list[1] += 1
+                break
+            # ----------------------------------------------------------------------------------------------------------
+
+            # ----------------------------------------------------------------------------------------------------------
             # add step
+            # ----------------------------------------------------------------------------------------------------------
             self.step += 1
             if self.step == max_step:
                 print ("Draw! No one wins")
                 break
             #
-            if is_win:
-                break
+            # ----------------------------------------------------------------------------------------------------------
+
             if is_print:
                 self.board.print_board()
+
+
             time.sleep(1/speed)
             self._ai_move(second_move_ai, is_random=True)
-            is_win = self._check_win()
+
+            # ----------------------------------------------------------------------------------------------------------
+            # CHECK WIN
+            # ----------------------------------------------------------------------------------------------------------
+            is_win, winning_chess = self._check_win()
+            if is_win:
+                # record winning rate
+                if winning_chess == self.board.X:
+                    first_move_ai.win_lose_list[0] += 1
+                    second_move_ai.win_lose_list[1] += 1
+                elif winning_chess == self.board.O:
+                    second_move_ai.win_lose_list[0] += 1
+                    first_move_ai.win_lose_list[1] += 1
+                break
+            # ----------------------------------------------------------------------------------------------------------
+
+            # ----------------------------------------------------------------------------------------------------------
             # add step
+            # ----------------------------------------------------------------------------------------------------------
             self.step += 1
             if self.step == max_step:
                 print ("Draw! No one wins")
                 break
-            #
-            if is_win:
-                break
+            # ----------------------------------------------------------------------------------------------------------
+
             if is_print:
                 self.board.print_board()
 
