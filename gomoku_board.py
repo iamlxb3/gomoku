@@ -5,7 +5,7 @@ import math
 class Board:
 
     def __init__(self):
-        self.board_size = 15
+        self.board_size = 8
         self.board_list = []
         self.board_array = np.array([])
         self.e_s_one = ' '
@@ -82,7 +82,7 @@ class Board:
                 # scan each row
                 for row in self.board_array:
                     x_qizi_count = 0
-                    for element in row:
+                    for i, element in enumerate(row):
                         if element != x_qizi and x_qizi_count < 5:
                             x_qizi_count = 0
                         elif element != x_qizi and x_qizi_count == 5:
@@ -90,13 +90,16 @@ class Board:
                             this_loop_is_find_winner = True
                         if element == x_qizi:
                             x_qizi_count += 1
+                        if i == len(row) - 1 and x_qizi_count == 5:
+                            value_list[I] = x_qizi_count
+                            this_loop_is_find_winner = True
 
                 #
 
                 # scan each column
                 for col in self.board_array.T:
                     x_qizi_count = 0
-                    for element in col:
+                    for i, element in enumerate(col):
                         if element != x_qizi and x_qizi_count < 5:
                             x_qizi_count = 0
                         elif element != x_qizi and x_qizi_count == 5:
@@ -104,7 +107,9 @@ class Board:
                             this_loop_is_find_winner = True
                         if element == x_qizi:
                             x_qizi_count += 1
-                #
+                        if i == len(col) - 1 and x_qizi_count == 5:
+                            value_list[I] = x_qizi_count
+                            this_loop_is_find_winner = True                #
 
                 # scan from left-bottom corner to right-up corner
                 width = self.board_array.shape[0]
@@ -129,7 +134,8 @@ class Board:
                 fb_ru_array = np.array(fb_ru_list)
 
                 for row_list in fb_ru_array:
-                    for element in row_list:
+                    x_qizi_count = 0
+                    for i, element in enumerate(row_list):
                         if element != x_qizi and x_qizi_count < 5:
                             x_qizi_count = 0
                         elif element != x_qizi and x_qizi_count == 5:
@@ -137,6 +143,9 @@ class Board:
                             this_loop_is_find_winner = True
                         if element == x_qizi:
                             x_qizi_count += 1
+                        if i == len(row_list) - 1 and x_qizi_count == 5:
+                            value_list[I] = x_qizi_count
+                            this_loop_is_find_winner = True
                 #
 
 
@@ -157,7 +166,8 @@ class Board:
                 lu_rb_array = np.array(lu_rb_list)
 
                 for row_list in lu_rb_array:
-                    for element in row_list:
+                    x_qizi_count = 0
+                    for i, element in enumerate(row_list):
                         if element != x_qizi and x_qizi_count < 5:
                             x_qizi_count = 0
                         elif element != x_qizi and x_qizi_count == 5:
@@ -165,6 +175,9 @@ class Board:
                             this_loop_is_find_winner = True
                         if element == x_qizi:
                             x_qizi_count += 1
+                        if i == len(row_list) - 1 and x_qizi_count == 5:
+                            value_list[I] = x_qizi_count
+                            this_loop_is_find_winner = True
             break
 
         # ----------------------------------------------------------------------------------------------------------

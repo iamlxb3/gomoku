@@ -7,6 +7,7 @@ class Gomoku:
     def __init__(self, board):
         self.board = board
         self.is_game_end = False
+        self.step = 0
 
     def initialize(self):
         self.board.initialize_board()
@@ -119,7 +120,15 @@ class Gomoku:
         self.board.print_board()
 
     def ai_vs_ai(self, ai1, ai2, speed = 1, is_print = False):
+
+        # (0.) add ai
         self._add_ai(ai1, ai2)
+
+        # (1.) clear and add max step
+        self.step=0
+        max_step = self.board.board_size**2
+        #
+
         print ("Load ai complete! Ai Vs Ai!")
         if ai1.is_first:
             first_move_ai = ai1
@@ -132,6 +141,12 @@ class Gomoku:
             time.sleep(1/speed)
             self._ai_move(first_move_ai, is_random=True)
             is_win = self._check_win()
+            # add step
+            self.step += 1
+            if self.step == max_step:
+                print ("Draw! No one wins")
+                break
+            #
             if is_win:
                 break
             if is_print:
@@ -139,9 +154,20 @@ class Gomoku:
             time.sleep(1/speed)
             self._ai_move(second_move_ai, is_random=True)
             is_win = self._check_win()
+            # add step
+            self.step += 1
+            if self.step == max_step:
+                print ("Draw! No one wins")
+                break
+            #
             if is_win:
                 break
             if is_print:
                 self.board.print_board()
+
+
+
+
+
         if is_print:
             self.board.print_board()
