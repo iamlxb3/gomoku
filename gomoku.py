@@ -1,5 +1,6 @@
-from gomoku_board import Board
+import sys
 import random
+import time
 
 class Gomoku:
 
@@ -10,7 +11,19 @@ class Gomoku:
     def initialize(self):
         self.board.initialize_board()
 
-    def _ai_move(self, is_first, is_random = False):
+    def _add_ai(self, ai1, ai2):
+        if ai1.is_first == ai2.is_first:
+            print ("Two ais have the same is_first!")
+            sys.exit()
+        elif ai1.name == ai2.name:
+            print ("Two ais have the same name!")
+            sys.exit()
+        self.ai1 = ai1
+        self.ai2 = ai2
+
+
+    def _ai_move(self, ai, is_random = False):
+        is_first = ai.is_first
         pos_list = [0,0]
         if is_random:
             valid_pos_list = self.board.get_ai_recommended_pos_list()
@@ -78,13 +91,15 @@ class Gomoku:
                 self.board.print_board()
 
 
+    def human_vs_ai(self, ai, is_human_first = True):
 
-    def human_vs_ai(self, is_human_first = True):
+
         print ("Human Vs Ai!")
         is_ai_first = not is_human_first
+        ai.is_first = is_ai_first
 
         if not is_human_first:
-            self._ai_move(is_ai_first)
+            self._ai_move(ai)
 
         self.board.print_board()
 
@@ -95,7 +110,7 @@ class Gomoku:
             is_win = self._check_win()
             if is_win:
                 break
-            self._ai_move(is_ai_first, is_random=True)
+            self._ai_move(ai, is_random=True)
             is_win = self._check_win()
             if is_win:
                 break
@@ -103,3 +118,30 @@ class Gomoku:
 
         self.board.print_board()
 
+    def ai_vs_ai(self, ai1, ai2, speed = 1, is_print = False):
+        self._add_ai(ai1, ai2)
+        print ("Load ai complete! Ai Vs Ai!")
+        if ai1.is_first:
+            first_move_ai = ai1
+            second_move_ai = ai2
+        else:
+            first_move_ai = ai2
+            second_move_ai = ai1
+
+        while not self.is_game_end:
+            time.sleep(1/speed)
+            self._ai_move(first_move_ai, is_random=True)
+            is_win = self._check_win()
+            if is_win:
+                break
+            if is_print:
+                self.board.print_board()
+            time.sleep(1/speed)
+            self._ai_move(second_move_ai, is_random=True)
+            is_win = self._check_win()
+            if is_win:
+                break
+            if is_print:
+                self.board.print_board()
+        if is_print:
+            self.board.print_board()

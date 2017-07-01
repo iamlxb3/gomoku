@@ -47,12 +47,16 @@ class Board:
         chess_pos_list = self.get_chess_pos_list()
         valid_pos_list = self.get_valid_pos_list()
 
-        for valid_pos in valid_pos_list:
-            for chess_pos in chess_pos_list:
-                distance = compute_distance(valid_pos, chess_pos)
+        # the first position
+        if not chess_pos_list:
+            recommended_pos_list = [[7,7]] #center
+        else:
+            for valid_pos in valid_pos_list:
+                for chess_pos in chess_pos_list:
+                    distance = compute_distance(valid_pos, chess_pos)
 
-                if distance < 6:
-                    recommended_pos_list.append(valid_pos)
+                    if distance < 6:
+                        recommended_pos_list.append(valid_pos)
 
         return recommended_pos_list
 
@@ -70,84 +74,111 @@ class Board:
         examine_list = [self.O, self.X]
         value_list = [0, 0] # max in-squence value for white and black chess
 
+        this_loop_is_find_winner = False
 
-        for I, x_qizi in enumerate(examine_list):
+        while not this_loop_is_find_winner:
+            for I, x_qizi in enumerate(examine_list):
 
-            # scan each row
-            for row in self.board_array:
-                count_value = np.count_nonzero(row == x_qizi)
-                if count_value > value_list[I]:
-                    value_list[I] = count_value
-            #
+                # scan each row
+                for row in self.board_array:
+                    x_qizi_count = 0
+                    for element in row:
+                        if element != x_qizi and x_qizi_count < 5:
+                            x_qizi_count = 0
+                        elif element != x_qizi and x_qizi_count == 5:
+                            value_list[I] = x_qizi_count
+                            this_loop_is_find_winner = True
+                        if element == x_qizi:
+                            x_qizi_count += 1
 
-            # scan each column
-            for row in self.board_array.T:
-                count_value = np.count_nonzero(row == x_qizi)
-                if count_value > value_list[I]:
-                    value_list[I] = count_value
-            #
+                #
 
-            # scan from left-bottom corner to right-up corner
-            width = self.board_array.shape[0]
-            max_index = width-1
-            #
+                # scan each column
+                for col in self.board_array.T:
+                    x_qizi_count = 0
+                    for element in col:
+                        if element != x_qizi and x_qizi_count < 5:
+                            x_qizi_count = 0
+                        elif element != x_qizi and x_qizi_count == 5:
+                            value_list[I] = x_qizi_count
+                            this_loop_is_find_winner = True
+                        if element == x_qizi:
+                            x_qizi_count += 1
+                #
 
-            fb_ru_list = []
-            for i in range(width):
+                # scan from left-bottom corner to right-up corner
+                width = self.board_array.shape[0]
+                max_index = width-1
+                #
 
-                temp_list1 = []
-                temp_list2 = []
-                for j in range(i + 1):
-                    temp_list1.append(self.board_array[max_index - i + j, j])
+                fb_ru_list = []
+                for i in range(width):
+
+                    temp_list1 = []
+                    temp_list2 = []
+                    for j in range(i + 1):
+                        temp_list1.append(self.board_array[max_index - i + j, j])
+                        if i != max_index:
+                            temp_list2.append(self.board_array[j, max_index - i + j])
+                    fb_ru_list.append(temp_list1)
                     if i != max_index:
-                        temp_list2.append(self.board_array[j, max_index - i + j])
-                fb_ru_list.append(temp_list1)
-                if i != max_index:
-                    fb_ru_list.append(temp_list2)
-            #
+                        fb_ru_list.append(temp_list2)
+                #
 
 
-            fb_ru_array = np.array(fb_ru_list)
+                fb_ru_array = np.array(fb_ru_list)
 
-            for row_list in fb_ru_array:
-                count_value = row_list.count(x_qizi)
-                if count_value > value_list[I]:
-                    value_list[I] = count_value
-            #
+                for row_list in fb_ru_array:
+                    for element in row_list:
+                        if element != x_qizi and x_qizi_count < 5:
+                            x_qizi_count = 0
+                        elif element != x_qizi and x_qizi_count == 5:
+                            value_list[I] = x_qizi_count
+                            this_loop_is_find_winner = True
+                        if element == x_qizi:
+                            x_qizi_count += 1
+                #
 
 
-            # scan from left-up corner to right-bottom corner
-            lu_rb_list = []
-            for i in range(width):
-                temp_list1 = []
-                temp_list2 = []
-                for j in range(i + 1):
-                    temp_list1.append(self.board_array[i - j, j])
+                # scan from left-up corner to right-bottom corner
+                lu_rb_list = []
+                for i in range(width):
+                    temp_list1 = []
+                    temp_list2 = []
+                    for j in range(i + 1):
+                        temp_list1.append(self.board_array[i - j, j])
+                        if i != max_index:
+                            temp_list2.append(self.board_array[max_index - j, max_index - i + j])
+                    lu_rb_list.append(temp_list1)
                     if i != max_index:
-                        temp_list2.append(self.board_array[max_index - j, max_index - i + j])
-                lu_rb_list.append(temp_list1)
-                if i != max_index:
-                    lu_rb_list.append(temp_list2)
+                        lu_rb_list.append(temp_list2)
 
-            #
-            lu_rb_array = np.array(lu_rb_list)
+                #
+                lu_rb_array = np.array(lu_rb_list)
 
-            for row_list in lu_rb_array:
-                count_value = row_list.count(x_qizi)
-                if count_value > value_list[I]:
-                    value_list[I] = count_value
-            #
+                for row_list in lu_rb_array:
+                    for element in row_list:
+                        if element != x_qizi and x_qizi_count < 5:
+                            x_qizi_count = 0
+                        elif element != x_qizi and x_qizi_count == 5:
+                            value_list[I] = x_qizi_count
+                            this_loop_is_find_winner = True
+                        if element == x_qizi:
+                            x_qizi_count += 1
+            break
 
         # ----------------------------------------------------------------------------------------------------------
         # CHECK WINNER
         # ----------------------------------------------------------------------------------------------------------
         # expection handling
+        print ("value_list: ", value_list)
+
         if value_list[0] >= 5 and value_list[1] >= 5:
             print ("Error! Find 2 scan value >= 5")
             sys.exit()
         #
-        if value_list[0] <= 0 and value_list[1] <= 0:
-            print("scan error! both value <= 0")
+        if value_list[0] < 0 or value_list[1] < 0:
+            print("scan error!  value < 0")
             sys.exit()
 
         for i, value in enumerate(value_list):
