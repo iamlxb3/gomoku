@@ -14,6 +14,7 @@ class Board:
         self.O = 'O'
         self.X = 'X'
         self.alphabat = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+        self.ai_recommend_distance = 5
 
     def initialize_board(self):
         self.board_list = []
@@ -56,7 +57,7 @@ class Board:
                 for chess_pos in chess_pos_list:
                     distance = compute_distance(valid_pos, chess_pos)
 
-                    if distance < 6:
+                    if distance < self.ai_recommend_distance:
                         recommended_pos_list.append(valid_pos)
 
         return recommended_pos_list
@@ -72,6 +73,24 @@ class Board:
 
     def scan_board(self):
 
+        def find_qizi_count_in_each_row(x_qizi, board_array, value_list):
+            this_loop_is_find_winner = False
+            for row in board_array:
+                x_qizi_count = 0
+                for i, element in enumerate(row):
+                    if element != x_qizi and x_qizi_count < 5:
+                        x_qizi_count = 0
+                    elif x_qizi_count == 5:
+                        value_list[I] = x_qizi_count
+                        this_loop_is_find_winner = True
+
+                    if element == x_qizi:
+                        x_qizi_count += 1
+
+            return this_loop_is_find_winner, value_list
+
+
+        # ::: scan_board :::
         examine_list = [self.O, self.X]
         value_list = [0, 0] # max in-squence value for white and black chess
 
@@ -81,36 +100,10 @@ class Board:
             for I, x_qizi in enumerate(examine_list):
 
                 # scan each row
-                for row in self.board_array:
-                    x_qizi_count = 0
-                    for i, element in enumerate(row):
-                        if element != x_qizi and x_qizi_count < 5:
-                            x_qizi_count = 0
-                        elif element != x_qizi and x_qizi_count == 5:
-                            value_list[I] = x_qizi_count
-                            this_loop_is_find_winner = True
-                        if element == x_qizi:
-                            x_qizi_count += 1
-                        if i == len(row) - 1 and x_qizi_count == 5:
-                            value_list[I] = x_qizi_count
-                            this_loop_is_find_winner = True
-
-                #
+                this_loop_is_find_winner, value_list = find_qizi_count_in_each_row(x_qizi, self.board_array, value_list)
 
                 # scan each column
-                for col in self.board_array.T:
-                    x_qizi_count = 0
-                    for i, element in enumerate(col):
-                        if element != x_qizi and x_qizi_count < 5:
-                            x_qizi_count = 0
-                        elif element != x_qizi and x_qizi_count == 5:
-                            value_list[I] = x_qizi_count
-                            this_loop_is_find_winner = True
-                        if element == x_qizi:
-                            x_qizi_count += 1
-                        if i == len(col) - 1 and x_qizi_count == 5:
-                            value_list[I] = x_qizi_count
-                            this_loop_is_find_winner = True                #
+                this_loop_is_find_winner, value_list = find_qizi_count_in_each_row(x_qizi, self.board_array.T, value_list)
 
                 # scan from left-bottom corner to right-up corner
                 width = self.board_array.shape[0]
@@ -134,20 +127,7 @@ class Board:
 
                 fb_ru_array = np.array(fb_ru_list)
 
-                for row_list in fb_ru_array:
-                    x_qizi_count = 0
-                    for i, element in enumerate(row_list):
-                        if element != x_qizi and x_qizi_count < 5:
-                            x_qizi_count = 0
-                        elif element != x_qizi and x_qizi_count == 5:
-                            value_list[I] = x_qizi_count
-                            this_loop_is_find_winner = True
-                        if element == x_qizi:
-                            x_qizi_count += 1
-                        if i == len(row_list) - 1 and x_qizi_count == 5:
-                            value_list[I] = x_qizi_count
-                            this_loop_is_find_winner = True
-                #
+                this_loop_is_find_winner, value_list = find_qizi_count_in_each_row(x_qizi, fb_ru_array, value_list)
 
 
                 # scan from left-up corner to right-bottom corner
@@ -165,20 +145,8 @@ class Board:
 
                 #
                 lu_rb_array = np.array(lu_rb_list)
+                this_loop_is_find_winner, value_list = find_qizi_count_in_each_row(x_qizi, lu_rb_array, value_list)
 
-                for row_list in lu_rb_array:
-                    x_qizi_count = 0
-                    for i, element in enumerate(row_list):
-                        if element != x_qizi and x_qizi_count < 5:
-                            x_qizi_count = 0
-                        elif element != x_qizi and x_qizi_count == 5:
-                            value_list[I] = x_qizi_count
-                            this_loop_is_find_winner = True
-                        if element == x_qizi:
-                            x_qizi_count += 1
-                        if i == len(row_list) - 1 and x_qizi_count == 5:
-                            value_list[I] = x_qizi_count
-                            this_loop_is_find_winner = True
             break
 
         # ----------------------------------------------------------------------------------------------------------

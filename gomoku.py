@@ -32,9 +32,15 @@ class Gomoku:
     def _ai_move(self, ai, is_random = False):
         is_first = ai.is_first
         pos_list = [0,0]
+        valid_pos_list = self.board.get_ai_recommended_pos_list()
+
         if is_random:
-            valid_pos_list = self.board.get_ai_recommended_pos_list()
             pos_list = random.sample(valid_pos_list,1)[0]
+        else:
+            pos_list = self.gomuku_rl.predict_next_best_move(valid_pos_list, ai)
+
+        if pos_list is None:
+            pos_list = random.sample(valid_pos_list, 1)[0]
 
         pos1 = pos_list[0]
         pos2 = pos_list[1]
@@ -128,7 +134,7 @@ class Gomoku:
 
 
 
-    def ai_vs_ai(self, ai1, ai2, speed = 1, is_print = False):
+    def ai_vs_ai(self, ai1, ai2, speed = 1, is_print = False, is_ai_random = True):
 
         # (0.) add ai
         self._add_ai(ai1, ai2)
@@ -138,7 +144,6 @@ class Gomoku:
         max_step = self.board.board_size**2
         #
 
-        print ("Load ai complete! Ai Vs Ai!")
         if ai1.is_first:
             first_move_ai = ai1
             second_move_ai = ai2
@@ -150,7 +155,7 @@ class Gomoku:
             time.sleep(1/speed)
             # RL-SAVE STATE
             self.gomuku_rl.save_state(first_move_ai)
-            self._ai_move(first_move_ai, is_random=True)
+            self._ai_move(first_move_ai, is_random=is_ai_random)
             # RL-SAVE ACTION
             self.gomuku_rl.save_action(first_move_ai)
             # ----------------------------------------------------------------------------------------------------------
@@ -185,7 +190,7 @@ class Gomoku:
             time.sleep(1/speed)
             # RL-SAVE STATE
             self.gomuku_rl.save_state(second_move_ai)
-            self._ai_move(second_move_ai, is_random=True)
+            self._ai_move(second_move_ai, is_random=is_ai_random)
             # RL-SAVE ACTION
             self.gomuku_rl.save_action(second_move_ai)
             # ----------------------------------------------------------------------------------------------------------
@@ -216,10 +221,16 @@ class Gomoku:
             if is_print:
                 self.board.print_board()
 
-        # RL-SAVE-REWARD
-        self.gomuku_rl.get_reward(winning_chess)
-        print ("self.gomuku_rl.action_list: ", len(self.gomuku_rl.action_list))
-
-
+        # print win image
         if is_print:
             self.board.print_board()
+
+        # RL-SAVE-REWARD
+        self.gomuku_rl.get_reward(winning_chess)
+
+
+        # RL-TRAINING
+        self.gomuku_rl.rl_train()
+        #
+
+
