@@ -1,9 +1,11 @@
 from gomoku import Gomoku
 from gomoku_board import Board
 from gomoku_ai import GomokuAi
+from gomoku_rl import GomukuRl
 
 board1 = Board()
-gomoku1 = Gomoku(board1)
+gomuku_rl = GomukuRl(board1)
+gomoku1 = Gomoku(board1, gomuku_rl=gomuku_rl)
 
 gomoku1.initialize()
 
@@ -22,10 +24,11 @@ gomoku1.initialize()
 ai1 = GomokuAi(name='ai1_black', is_first=True)
 ai2 = GomokuAi(name='ai2_white', is_first=False)
 
+
 Total_game = 10
 for i in range(Total_game):
     gomoku1.initialize()
-    gomoku1.ai_vs_ai(ai1, ai2, speed=20, is_print=True)
+    gomoku1.ai_vs_ai(ai1, ai2, speed=20, is_print=False)
     print ("Game playing ({}/{}) ...".format(i+1, Total_game))
     ai1.print_return_win_ratio()
     ai2.print_return_win_ratio()

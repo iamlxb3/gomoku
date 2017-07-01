@@ -2,17 +2,20 @@ import sys
 import random
 import time
 
+
 class Gomoku:
 
-    def __init__(self, board):
+    def __init__(self, board, gomuku_rl = None):
         self.board = board
         self.is_game_end = False
         self.step = 0
         self.game_count = 0
+        self.gomuku_rl = gomuku_rl
 
     def initialize(self):
         self.step = 0
         self.is_game_end = False
+        self.gomuku_rl.reset()
         self.board.initialize_board()
 
     def _add_ai(self, ai1, ai2):
@@ -36,6 +39,7 @@ class Gomoku:
         pos1 = pos_list[0]
         pos2 = pos_list[1]
         self.board.update_board(pos1, pos2, is_first)
+        ai.latest_action = [pos1, pos2]
 
     def _human_move(self, is_first):
         pos1, pos2 = self._human_pos_input()
@@ -144,8 +148,11 @@ class Gomoku:
 
         while not self.is_game_end:
             time.sleep(1/speed)
+            # RL-SAVE STATE
+            self.gomuku_rl.save_state(first_move_ai)
             self._ai_move(first_move_ai, is_random=True)
-
+            # RL-SAVE ACTION
+            self.gomuku_rl.save_action(first_move_ai)
             # ----------------------------------------------------------------------------------------------------------
             # CHECK WIN
             # ----------------------------------------------------------------------------------------------------------
@@ -176,8 +183,11 @@ class Gomoku:
 
 
             time.sleep(1/speed)
+            # RL-SAVE STATE
+            self.gomuku_rl.save_state(second_move_ai)
             self._ai_move(second_move_ai, is_random=True)
-
+            # RL-SAVE ACTION
+            self.gomuku_rl.save_action(second_move_ai)
             # ----------------------------------------------------------------------------------------------------------
             # CHECK WIN
             # ----------------------------------------------------------------------------------------------------------
@@ -199,14 +209,16 @@ class Gomoku:
             self.step += 1
             if self.step == max_step:
                 print ("Draw! No one wins")
+                winning_chess = None
                 break
             # ----------------------------------------------------------------------------------------------------------
 
             if is_print:
                 self.board.print_board()
 
-
-
+        # RL-SAVE-REWARD
+        self.gomuku_rl.get_reward(winning_chess)
+        print ("self.gomuku_rl.action_list: ", len(self.gomuku_rl.action_list))
 
 
         if is_print:
