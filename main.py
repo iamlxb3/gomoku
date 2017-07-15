@@ -33,7 +33,7 @@ gomuku_rl = GomukuRl(board1, mlp_regressor1)
 # --------------------------------------------------------------------------------------------------------------
 Total_game = 2000
 gomoku1 = Gomoku(board1, Total_game, gomuku_rl=gomuku_rl)
-gomoku1.initialize()
+gomoku1.reset()
 # --------------------------------------------------------------------------------------------------------------
 
 
@@ -58,7 +58,7 @@ ai2 = GomokuAi(name='ai2_white', is_first=False, regressor = mlp_regressor1)
 
 
 for i in range(gomoku1.Total_game):
-    gomoku1.initialize()
+    gomoku1.reset()
     gomoku1.ai_vs_ai(ai1, ai2, speed=20, is_print=False, is_ai_random = False)
     print ("Game playing ({}/{}) ...".format(i+1, Total_game))
     ai1.print_return_win_ratio()

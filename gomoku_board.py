@@ -5,7 +5,9 @@ import math
 class Board:
 
     def __init__(self):
-        self.board_size = 15
+        self.board_size = 9
+        print ("Board_size: {}X{}".format(self.board_size, self.board_size))
+        self.center_point = (int((self.board_size-1) / 2), int((self.board_size-1) / 2))
         self.board_list = []
         self.board_array = np.array([])
         self.e_s_one = ' '
@@ -54,7 +56,7 @@ class Board:
 
         # the first position
         if not chess_pos_list:
-            recommended_pos_list = [(7,7)] #center
+            recommended_pos_list = [self.center_point] #center
         else:
             for valid_pos in valid_pos_list:
                 for chess_pos in chess_pos_list:
@@ -69,7 +71,7 @@ class Board:
 
         if game_step <= 40:
             centerted_pos_list = [ ]
-            center_point = (7, 7)
+            center_point = self.center_point
             restrict_length = 4
             width_pos_min = center_point[0] - restrict_length
             width_pos_max = center_point[0] + restrict_length

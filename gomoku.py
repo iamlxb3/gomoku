@@ -13,20 +13,18 @@ class Gomoku:
         self.Total_game = Total_game
         self.gomuku_rl = gomuku_rl
 
-    def initialize(self):
+        # set random
+        self.gomuku_rl.random_walk_factor = 0.95
+        #
+
+
+    def reset(self):
         self.step = 0
         self.is_game_end = False
         self.gomuku_rl.reset()
         self.max_step = self.board.board_size**2
         self.board.initialize_board()
 
-        # set random
-        self.gomuku_rl.random_walk_factor = 0.95
-        #
-
-    def reset(self):
-        self.step = 0
-        self.is_game_end = False
 
     def delete_Q_set(self, every_N_game):
         if self.game_count % every_N_game == 0:
@@ -46,7 +44,8 @@ class Gomoku:
 
     def update_random(self):
         update_value = 1.0 / self.Total_game
-        if self.gomuku_rl.random_walk_factor >= update_value:
+        random_min_value = 0.1
+        if self.gomuku_rl.random_walk_factor >= random_min_value:
             self.gomuku_rl.random_walk_factor -= update_value
             print ("Update random factor! random factor now: {}".format(self.gomuku_rl.random_walk_factor))
 
@@ -201,6 +200,7 @@ class Gomoku:
             self.step += 1
             if self.step == self.max_step:
                 print ("Draw! No one wins")
+                winning_chess = None
                 break
             #
             # ----------------------------------------------------------------------------------------------------------

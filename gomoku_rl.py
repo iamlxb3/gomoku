@@ -119,6 +119,7 @@ class GomukuRl:
             print ("length of player list, state list and actions list is not equal or list is empty!")
             sys.exit()
 
+
         for is_first in self.player_list:
             if winning_chess is None:
                 reward = 0
@@ -130,6 +131,9 @@ class GomukuRl:
                 reward = 1
             elif not is_first and winning_chess == self.board.X:
                 reward = -1
+
+
+            #print("reward: ", reward)
             self.reward_list.append(reward)
 
     def _get_feature_list(self):
