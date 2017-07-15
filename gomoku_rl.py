@@ -14,6 +14,8 @@ class GomukuRl:
         is_Q_set_exist = os.path.exists(self.Q_set_path)
         if is_Q_set_exist:
             self.Q_set = pickle.load(open(self.Q_set_path, "rb"))
+        else:
+            self.Q_set = collections.defaultdict(lambda: 0)
 
 
     def __init__(self, board, regressor):
@@ -30,14 +32,14 @@ class GomukuRl:
 
         # Q set
         self.Q_set_path = 'gomuku_g_dict'
-        self.Q_set = collections.defaultdict(lambda :0)
+        self.Q_set = collections.defaultdict(lambda:0)
         #
 
         # get action
         action_mapping_list = []
         for i in range(board.board_size):
             for j in range(board.board_size):
-                action_mapping_list.append([i,j])
+                action_mapping_list.append((i,j))
         self.action_mapping_list = action_mapping_list
         #
 
@@ -196,3 +198,6 @@ class GomukuRl:
 
         return best_pos
 
+    def delete_Q_set(self):
+        os.remove(self.Q_set_path)
+        return self.Q_set_path

@@ -55,14 +55,19 @@ ai1 = GomokuAi(name='ai1_black', is_first=True, regressor = mlp_regressor1)
 ai2 = GomokuAi(name='ai2_white', is_first=False, regressor = mlp_regressor1)
 
 
-Total_game = 1000
+Total_game = 10000
 for i in range(Total_game):
     gomoku1.initialize()
-    gomoku1.ai_vs_ai(ai1, ai2, speed=20, is_print=False, is_ai_random = False)
+    gomoku1.ai_vs_ai(ai1, ai2, speed=20, is_print=True, is_ai_random = False)
     print ("Game playing ({}/{}) ...".format(i+1, Total_game))
     ai1.print_return_win_ratio()
     ai2.print_return_win_ratio()
     gomoku1.game_count += 1
+
+    every_N_game = 200
+    gomoku1.delete_Q_set(every_N_game)
+
+    #　delete Q_set every 400 games
 
 
 

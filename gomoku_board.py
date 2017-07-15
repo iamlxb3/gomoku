@@ -27,7 +27,7 @@ class Board:
         for i, row in enumerate(self.board_array):
             for j, col in enumerate(self.board_array):
                 if self.board_array[i][j] == self.e_c:
-                    valid_pos_list.append([i,j])
+                    valid_pos_list.append((i,j))
         return valid_pos_list
 
     def get_chess_pos_list(self):
@@ -35,23 +35,26 @@ class Board:
         for i, row in enumerate(self.board_array):
             for j, col in enumerate(self.board_array):
                 if self.board_array[i][j] == self.O or self.board_array[i][j] == self.X:
-                    chess_pos_list.append([i,j])
+                    chess_pos_list.append((i,j))
         return chess_pos_list
 
-    def get_ai_recommended_pos_list(self):
+    def get_ai_recommended_pos_list(self, game_step):
 
         def compute_distance(cor1, cor2):
             distance = math.sqrt((cor1[0]-cor2[0])**2 + (cor1[1]-cor2[1])**2)
             return distance
 
+
+
         # :::get_ai_recommended_pos_list
+
         recommended_pos_list = []
         chess_pos_list = self.get_chess_pos_list()
         valid_pos_list = self.get_valid_pos_list()
 
         # the first position
         if not chess_pos_list:
-            recommended_pos_list = [[7,7]] #center
+            recommended_pos_list = [(7,7)] #center
         else:
             for valid_pos in valid_pos_list:
                 for chess_pos in chess_pos_list:
@@ -59,6 +62,26 @@ class Board:
 
                     if distance < self.ai_recommend_distance:
                         recommended_pos_list.append(valid_pos)
+
+        # ----------------------------------------------------------------------------------------------------------
+        # add restriction to minimize search space
+        # ----------------------------------------------------------------------------------------------------------
+
+        if game_step <= 40:
+            centerted_pos_list = [ ]
+            center_point = (7, 7)
+            restrict_length = 4
+            width_pos_min = center_point[0] - restrict_length
+            width_pos_max = center_point[0] + restrict_length
+            height_pos_min = center_point[1] - restrict_length
+            height_pos_max = center_point[1] + restrict_length
+            for i in range(width_pos_min, width_pos_max+1):
+                for j in range(height_pos_min, height_pos_max+1):
+                    centerted_pos_list.append((i,j))
+
+            recommended_pos_list = list(set(recommended_pos_list).intersection(set(centerted_pos_list)))
+        # ----------------------------------------------------------------------------------------------------------
+
 
         return recommended_pos_list
 
@@ -80,12 +103,13 @@ class Board:
                 for i, element in enumerate(row):
                     if element != x_qizi and x_qizi_count < 5:
                         x_qizi_count = 0
-                    elif x_qizi_count == 5:
+                    elif element == x_qizi:
+                        x_qizi_count += 1
+
+                    if  x_qizi_count == 5:
                         value_list[I] = x_qizi_count
                         this_loop_is_find_winner = True
-
-                    if element == x_qizi:
-                        x_qizi_count += 1
+                        return this_loop_is_find_winner, value_list
 
             return this_loop_is_find_winner, value_list
 
@@ -101,6 +125,7 @@ class Board:
 
                 # scan each row
                 this_loop_is_find_winner, value_list = find_qizi_count_in_each_row(x_qizi, self.board_array, value_list)
+
 
                 # scan each column
                 this_loop_is_find_winner, value_list = find_qizi_count_in_each_row(x_qizi, self.board_array.T, value_list)

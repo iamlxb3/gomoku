@@ -16,7 +16,18 @@ class Gomoku:
         self.step = 0
         self.is_game_end = False
         self.gomuku_rl.reset()
+        self.max_step = self.board.board_size**2
         self.board.initialize_board()
+
+    def reset(self):
+        self.step = 0
+        self.is_game_end = False
+
+    def delete_Q_set(self, every_N_game):
+        if self.game_count % every_N_game == 0:
+            deleted_path = self.gomuku_rl.delete_Q_set()
+            print ("delete Q_set on {} sucessfully! Every {} games.".format(deleted_path, every_N_game))
+
 
     def _add_ai(self, ai1, ai2):
         if ai1.is_first == ai2.is_first:
@@ -32,7 +43,8 @@ class Gomoku:
     def _ai_move(self, ai, is_random = False):
         is_first = ai.is_first
         pos_list = [0,0]
-        valid_pos_list = self.board.get_ai_recommended_pos_list()
+
+        valid_pos_list = self.board.get_ai_recommended_pos_list(self.step)
 
         if is_random:
             pos_list = random.sample(valid_pos_list,1)[0]
@@ -45,7 +57,7 @@ class Gomoku:
         pos1 = pos_list[0]
         pos2 = pos_list[1]
         self.board.update_board(pos1, pos2, is_first)
-        ai.latest_action = [pos1, pos2]
+        ai.latest_action = (pos1, pos2)
 
     def _human_move(self, is_first):
         pos1, pos2 = self._human_pos_input()
@@ -139,10 +151,8 @@ class Gomoku:
         # (0.) add ai
         self._add_ai(ai1, ai2)
 
-        # (1.) clear and add max step
-        self.step=0
-        max_step = self.board.board_size**2
-        #
+        # (1.) reset game
+        self.reset()
 
         if ai1.is_first:
             first_move_ai = ai1
@@ -167,9 +177,11 @@ class Gomoku:
                 if winning_chess == self.board.X:
                     first_move_ai.win_lose_list[0] += 1
                     second_move_ai.win_lose_list[1] += 1
+                    print ("Last Action: ", first_move_ai.latest_action)
                 elif winning_chess == self.board.O:
                     second_move_ai.win_lose_list[0] += 1
                     first_move_ai.win_lose_list[1] += 1
+                    print ("Last Action: ", second_move_ai.latest_action)
                 break
             # ----------------------------------------------------------------------------------------------------------
 
@@ -177,7 +189,7 @@ class Gomoku:
             # add step
             # ----------------------------------------------------------------------------------------------------------
             self.step += 1
-            if self.step == max_step:
+            if self.step == self.max_step:
                 print ("Draw! No one wins")
                 break
             #
@@ -202,9 +214,11 @@ class Gomoku:
                 if winning_chess == self.board.X:
                     first_move_ai.win_lose_list[0] += 1
                     second_move_ai.win_lose_list[1] += 1
+                    print ("Last Action: ", first_move_ai.latest_action)
                 elif winning_chess == self.board.O:
                     second_move_ai.win_lose_list[0] += 1
                     first_move_ai.win_lose_list[1] += 1
+                    print ("Last Action: ", second_move_ai.latest_action)
                 break
             # ----------------------------------------------------------------------------------------------------------
 
@@ -212,7 +226,7 @@ class Gomoku:
             # add step
             # ----------------------------------------------------------------------------------------------------------
             self.step += 1
-            if self.step == max_step:
+            if self.step == self.max_step:
                 print ("Draw! No one wins")
                 winning_chess = None
                 break
