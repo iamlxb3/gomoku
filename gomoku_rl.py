@@ -165,8 +165,9 @@ class GomukuRl:
         # --------------------------------------------------------------------------------------------------------------
         back_up_frequency = 500
         if game_count % back_up_frequency == 0:
-            regressor_backup_path = self.regressor_path + "_{}_backup".format(back_up_frequency)
+            regressor_backup_path = self.regressor_path + "_{}_backup".format(game_count)
             pickle.dump(self.regressor, open(regressor_backup_path, "wb"))
+            print ("Back up regressor succesfully! Path: {}".format(regressor_backup_path))
         # --------------------------------------------------------------------------------------------------------------
         pickle.dump(self.regressor, open(self.regressor_path, "wb"))
 
@@ -180,7 +181,7 @@ class GomukuRl:
         # add some randomness to the move
         random_num = random.random()
         if random_num <= self.random_walk_factor:
-            print ("Random walk!")
+            #print ("Random walk!")
             return None
         #
 

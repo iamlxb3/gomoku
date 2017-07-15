@@ -67,7 +67,7 @@ for i in range(gomoku1.Total_game):
 
     every_N_game = 100
     gomoku1.delete_Q_set(every_N_game)
-
+    print("------------------------------------------------------------------------")
     #　delete Q_set every 400 games
 
 

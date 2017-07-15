@@ -21,7 +21,7 @@ class Gomoku:
         self.board.initialize_board()
 
         # set random
-        self.gomuku_rl.random_walk_factor = 0.7
+        self.gomuku_rl.random_walk_factor = 0.95
         #
 
     def reset(self):
@@ -262,3 +262,5 @@ class Gomoku:
         # Update random factor
         self.update_random()
         #
+
+
