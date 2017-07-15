@@ -5,11 +5,12 @@ import time
 
 class Gomoku:
 
-    def __init__(self, board, gomuku_rl = None):
+    def __init__(self, board, Total_game, gomuku_rl = None):
         self.board = board
         self.is_game_end = False
         self.step = 0
         self.game_count = 0
+        self.Total_game = Total_game
         self.gomuku_rl = gomuku_rl
 
     def initialize(self):
@@ -18,6 +19,10 @@ class Gomoku:
         self.gomuku_rl.reset()
         self.max_step = self.board.board_size**2
         self.board.initialize_board()
+
+        # set random
+        self.gomuku_rl.random_walk_factor = 0.7
+        #
 
     def reset(self):
         self.step = 0
@@ -39,6 +44,11 @@ class Gomoku:
         self.ai1 = ai1
         self.ai2 = ai2
 
+    def update_random(self):
+        update_value = 1.0 / self.Total_game
+        if self.gomuku_rl.random_walk_factor >= update_value:
+            self.gomuku_rl.random_walk_factor -= update_value
+            print ("Update random factor! random factor now: {}".format(self.gomuku_rl.random_walk_factor))
 
     def _ai_move(self, ai, is_random = False):
         is_first = ai.is_first
@@ -235,6 +245,8 @@ class Gomoku:
             if is_print:
                 self.board.print_board()
 
+
+
         # print win image
         if is_print:
             self.board.print_board()
@@ -244,7 +256,9 @@ class Gomoku:
 
 
         # RL-TRAINING
-        self.gomuku_rl.rl_train()
+        self.gomuku_rl.rl_train(self.game_count)
         #
 
-
+        # Update random factor
+        self.update_random()
+        #

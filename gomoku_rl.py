@@ -151,7 +151,7 @@ class GomukuRl:
             # save Q_set
         dill.dump(self.Q_set, open(self.Q_set_path, "wb"))
 
-    def rl_train(self):
+    def rl_train(self, game_count):
         print ("RL regressor training...")
         self.update_Q_set()
         feature_list = list(self.Q_set.keys())
@@ -159,8 +159,16 @@ class GomukuRl:
         #print ("Q_set_value: {}".format(self.Q_set.values()))
         print ("rl_train start! sample number: {}".format(len(value_list)))
         self.regressor.regressor_train(feature_list, value_list)
-        pickle.dump(self.regressor, open(self.regressor_path, "wb"))
 
+        # --------------------------------------------------------------------------------------------------------------
+        # back up regressor
+        # --------------------------------------------------------------------------------------------------------------
+        back_up_frequency = 500
+        if game_count % back_up_frequency == 0:
+            regressor_backup_path = self.regressor_path + "_{}_backup".format(back_up_frequency)
+            pickle.dump(self.regressor, open(regressor_backup_path, "wb"))
+        # --------------------------------------------------------------------------------------------------------------
+        pickle.dump(self.regressor, open(self.regressor_path, "wb"))
 
 
     def predict_next_best_move(self, valid_pos_list, ai):
